@@ -1,94 +1,121 @@
 var express = require('express');
 var router = express.Router();
 const path = require('path');
-var {Storage} = require('@google-cloud/storage');
+var { Storage } = require('@google-cloud/storage');
 const Dotenv = require('dotenv');
 const multer = require('multer');
 const logger = require('../config/winston');
 
+function getToday(){
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = ("0" + (1 + date.getMonth())).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
 
-const today = new Date().toISOString().substring(0,10).replace(/-/g,'');
+  return year + "-" + month + "-" + day;
+}
 
 /////////////////////////////////////////////////////////////////////////
 //CNS LandingPage -> GCS
 /////////////////////////////////////////////////////////////////////////
 
 const storage = new Storage({
-	keyFilename: path.join(__dirname, '../lgcns-eloqua.json')
+  keyFilename: path.join(__dirname, '../lgcns-eloqua.json'),
 });
 
-const lgcnsBucket = storage.bucket('lgcns-eloqua-landing-files')
+const lgcnsBucket = storage.bucket('lgcns-eloqua-landing-files');
 
-const uploadImage = multer({
-    storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 20 * 1024 * 1024, //MB
-        files: 10,
-       
-    },
-	//여기서 파일이름 컨트롤 가능
-});
+const uploadFiles = (req, res, next) => {
 
-router.post('/ImageGCSTest', uploadImage.array('image', 10), (req, res) => {
-    
-    console.log(req.files);
-    
-    try{
+    const uploadImage = multer({
+        storage: multer.memoryStorage(),
+        limits: {
+            fileSize: 100 * 1024 * 1024, //MB
+            files: 10,
+        }
+    }).array('image', 10)
 
-        let filedata = req.files;
-
-        if(req.files.length !== 0){
-            console.log('file exist, trying to upload...');
-            
-            // const fileNaming = "";
-            // const blob = lgcnsBucket.file(fileNaming);
-            
-            Promise.all(filedata.map((f)=>{
-                    return new Promise((resolve, reject) => {
-                        lgcnsBucket
-                        .file(`${today}/${Date.now()}-${f.originalname}`) //file folder create and naming
-                        .createWriteStream()
-                        .on('finish', () => {
-                            //console.log("Success");
-                            resolve(f.originalname)
-                        })
-                        .on('error', err => {
-                            reject(err)
-                        })
-                        .end(f.buffer);
-                    })
-                })
-            )
-            .then((result) =>{
-                console.log(result);
-                res.json({ 
-                    "Result": true,
-                    "LandingPage" : result
-                })         
+    uploadImage(req, res, (error) => {
+        if (error instanceof multer.MulterError){
+            console.log('message >> multer Error');
+            console.log('errorMessage >>' + error.message);
+            console.log('errorCode >>' + error.code);
+            return res.status(500).json({ 
+                'Result': false,
+                'errorMessage': error.message
             })
-            .catch((err) => {
-                console.log(err);
-                res.json({ 
-                    "Result": false,
-                    "LandingPage" : err
-                })
-            })
-
-        } else { //파일이 존재하지 않을때 
-            res.json({ 
-                "Result" : true,
-                "LandingPage" : "files not exist"
+        } else if (error){
+            console.log('message >> multer Error occured');
+            console.log('errorMessage >>' + error.message);
+            return res.status(500).json({ 
+                'Result': false,
+                'errorMessage': error.message
             })
         }
-             
-	}catch (error){
-        console.log(error);
-        console.log(error.stack);
-        res.status(500).json({ 
-            "Result" : false
+        next()
+    })
+}
+
+router.post('/ImageGCSTest', uploadFiles, (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
+
+  try {
+    let filedata = req.files;
+
+    if (req.files.length !== 0) {
+      console.log('file exist, trying to upload...');
+
+      // const fileNaming = "";
+      // const blob = lgcnsBucket.file(fileNaming);
+
+      Promise.all(
+        filedata.map((f) => {
+        f.originalname = req.body.email[0]+'_'+req.body.campaignId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+          return new Promise((resolve, reject) => {
+            lgcnsBucket
+              .file(`${req.body.campaignId}/${getToday()}/${f.originalname}`) //file folder create and naming
+              .createWriteStream()
+              .on('finish', () => {
+                //console.log("Success");
+                resolve(f.originalname);
+              })
+              .on('error', (err) => {
+                reject(err);
+              })
+              .end(f.buffer);
+          });
+        })
+      )
+        .then((result) => {
+          console.log(result);
+          res.json({
+            Result: true,
+            LandingPage: result,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.json({
+            Result: false,
+            LandingPage: err,
+          });
         });
-	}
-    
+        
+    } else {
+      //파일이 존재하지 않을때
+      res.json({
+        Result: true,
+        LandingPage: 'files not exist',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    console.log(error.stack);
+    res.status(500).json({
+      Result: false,
+    });
+  }
 });
 
 // router.post('/GCSTest', function (req, res, next){
@@ -102,21 +129,18 @@ router.post('/ImageGCSTest', uploadImage.array('image', 10), (req, res) => {
 // });
 
 async function uploadFile() {
-	
-
-	await storage.bucket('lgcns-eloqua-landing-files').upload(filePath, {
-		destination: `/${today}/${fileData.filename}`,
-	  });
-	console.log(`${filePath} uploaded to ${bucketName}`);
+  await storage.bucket('lgcns-eloqua-landing-files').upload(filePath, {
+    destination: `/${today}/${fileData.filename}`,
+  });
+  console.log(`${filePath} uploaded to ${bucketName}`);
 }
 
-
 async function listBuckets() {
-	const [buckets] = await storage.getBuckets();
-	console.log('Buckets:');
-	buckets.forEach(bucket => {
-	  console.log(bucket.name);
-	});
+  const [buckets] = await storage.getBuckets();
+  console.log('Buckets:');
+  buckets.forEach((bucket) => {
+    console.log(bucket.name);
+  });
 }
 
 module.exports = router;
