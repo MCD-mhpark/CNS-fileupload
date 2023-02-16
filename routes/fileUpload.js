@@ -57,7 +57,7 @@ const uploadFiles = (req, res, next) => {
 
 router.post('/ImageGCSTest', uploadFiles, (req, res) => {
   console.log(req.body);
-  console.log(req.files);
+  console.log(req.files.originalname);
 
   try {
     let filedata = req.files;

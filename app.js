@@ -18,9 +18,10 @@ const whitelist = ['http://information.lgcns.com'];
 const corsOptons = {
 	origin : function (origin, cb){
 		if(whitelist.indexOf(origin) !== -1){
+			console.log(`${origin} >> pass`);
 			cb(null, true);
 		}else{
-			cb(new Error("not allowe origin..."))
+			cb(new Error("not allow origin Error..."))
 		}
 	},
 	credential: true

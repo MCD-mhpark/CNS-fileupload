@@ -112,7 +112,7 @@ dist
 # docker*
 
 # nginx setting
-nginx
+#nginx
 
 # ssl certigicate
 ssl

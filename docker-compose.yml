@@ -1,21 +1,19 @@
 version: '3.6'
 services:
   nginx:
-    image: nginx:1.0
+    image: nginx:latest
     #내부에서 개방할 포트 : 외부에서 접근할 포트
     ports: 
       -"443:443"
-    
     volumes:
-      -
-    container_name: "nginxProgram"
+      - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    container_name: "nginx"
     depends_on:
-      - backEnd
+      - CNSAPI
 
-  backEnd:
-    build: 
-      context: .
-      dockerfile: ./config/Dockerfile
+  CNSAPI:
+    build: .
     image: 
     container_name: CNSAPI
     ports:
