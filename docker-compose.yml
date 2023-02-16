@@ -4,7 +4,7 @@ services:
     image: nginx:latest
     #내부에서 개방할 포트 : 외부에서 접근할 포트
     ports: 
-      -"443:443"
+      - "443:443"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf
       - ./ssl:/etc/nginx/ssl
@@ -12,14 +12,16 @@ services:
     depends_on:
       - CNSAPI
 
-  CNSAPI:
-    build: .
+  cnsapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: 
-    container_name: CNSAPI
+    container_name: cnsapi
     ports:
-      -"3001:3001"
+      - :"3001:3001"
     volumes: 
-      -/home/opc/src/CNS_api/:/home/cns-fileUpload/
+      - /home/opc/src/CNS_api/:/home/cns-fileUpload/
 
 
 
