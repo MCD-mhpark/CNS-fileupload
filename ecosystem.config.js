@@ -3,6 +3,9 @@ module.exports = {
     name: 'LGCNS-GCSAPI',
     script: './bin/www',
     watch: true,
+     ignore_watch: [
+            "logs"
+        ],
     instances: 3,
     exec_mode: "cluster",
 
