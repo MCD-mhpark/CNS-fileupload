@@ -6,13 +6,25 @@ var logger = require('morgan');
 var methodOverride = require('method-override');
 var moment = require('moment');
 const bodyParser = require('body-parser');
-
+const cors = require("cors");
 
 require('console-stamp')(console, {
     formatter: function() {
         return moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
     }
 });
+
+const whitelist = ['http://information.lgcns.com'];
+const corsOptons = {
+	origin : function (origin, cb){
+		if(whitelist.indexOf(origin) !== -1){
+			cb(null, true);
+		}else{
+			cb(new Error("not allowe origin..."))
+		}
+	},
+	credential: true
+}
 
 let app = express();
 
@@ -23,6 +35,7 @@ app.use(methodOverride('_method'));
 //app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/modules', express.static(module_files));
 
+app.use(cors(corsOptons));
 app.use(bodyParser.json({limit: '50mb'})); //body 의 크기 설정
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true})); //url의 크기 설정
  
