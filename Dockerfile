@@ -11,6 +11,7 @@ RUN apt-get install -y curl && curl -sL https://deb.nodesource.com/setup_18.x | 
 RUN apt-get install -y nodejs
 
 RUN npm install
+
 RUN npm install -g pm2 
 
 RUN pm2 install pm2-logrotate
