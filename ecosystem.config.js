@@ -4,7 +4,8 @@ module.exports = {
     script: './bin/www',
     watch: true,
      ignore_watch: [
-            "logs"
+            "logs",
+            "node_modules"
         ],
     instances: 3,
     exec_mode: "cluster",
