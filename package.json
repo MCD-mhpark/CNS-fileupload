@@ -34,6 +34,7 @@
     "node-schedule-tz": "^1.2.1-4",
     "nodemailer": "^6.7.5",
     "nodemon": "^2.0.20",
+    "pm2": "^5.2.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "winston": "^3.6.0",

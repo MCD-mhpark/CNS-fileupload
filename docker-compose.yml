@@ -17,10 +17,11 @@ services:
       context: .
       dockerfile: ./config/Dockerfile
     image: 
-    container_name: LGAPI
+    container_name: CNSAPI
     ports:
       -"3001:3001"
-    volumes:
+    volumes: 
+      -/home/opc/src/CNS_api/:/home/cns-fileUpload/
 
 
 

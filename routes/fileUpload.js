@@ -4,7 +4,6 @@ const path = require('path');
 var { Storage } = require('@google-cloud/storage');
 const Dotenv = require('dotenv');
 const multer = require('multer');
-const logger = require('../config/winston');
 
 function getToday(){
   var date = new Date();
