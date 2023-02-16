@@ -10,16 +10,15 @@ services:
       - ./ssl:/etc/nginx/ssl
     container_name: "nginx"
     depends_on:
-      - CNSAPI
+      - cnsapi
 
   cnsapi:
     build:
       context: .
       dockerfile: Dockerfile
-    image: 
     container_name: cnsapi
     ports:
-      - :"3001:3001"
+      - "3001:3001"
     volumes: 
       - /home/opc/src/CNS_api/:/home/cns-fileUpload/
 
