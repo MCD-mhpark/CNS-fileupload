@@ -55,7 +55,7 @@ const uploadFiles = (req, res, next) => {
     })
 }
 
-router.post('/ImageGCSTest', uploadFiles, (req, res) => {
+router.post('/ImageGCS', uploadFiles, (req, res) => {
   console.log(req.body);
   console.log(req.files.originalname);
 
@@ -126,6 +126,10 @@ router.post('/ImageGCSTest', uploadFiles, (req, res) => {
 // 	res.send('success')
 
 // });
+router.post('/test', (req, res) => {
+  console.log(req.body);
+  res.send('호출테스트 성공')
+});
 
 async function uploadFile() {
   await storage.bucket('lgcns-eloqua-landing-files').upload(filePath, {
