@@ -18,9 +18,10 @@ const whitelist = ['http://information.lgcns.com'];
 const corsOptons = {
 	origin : function (origin, cb){
 		if(whitelist.indexOf(origin) !== -1){
-			console.log(`${origin} >> pass`);
+			console.log(`cors: ${origin} >> pass`);
 			cb(null, true);
 		}else{
+			console.log(`cors: ${origin} >> false`);
 			cb(new Error("not allow origin Error..."))
 		}
 	},
@@ -63,7 +64,7 @@ app.use(function(err, req, res, next) {
 
 	// render the error page
 	res.status(err.status || 500);
-	res.json({ error: err })
+	res.json({ error: err.message })
 });
 
 module.exports = app;
