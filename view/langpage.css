@@ -1,0 +1,70 @@
+<style>
+  .fileSpan{
+    display: inline-flex !important;
+    margin: 8px;
+  }
+  #file_index_A_p{
+    margin : 0px
+  }
+   #file_index_B_p{
+    margin : 0px
+  }
+  
+  
+  .dropzone {
+    border: 1px solid rgba(0,0,0,.3) !important;
+	display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    gap: 20px;
+    
+}
+  .dropzone .dz-message .dz-button {
+    color: rgba(0,0,0,.3) !important;
+    font-weight: 700 !important;
+
+}
+  .dropzone.dz-clickable .dz-message {
+    grid-column: span 5 !important;
+}
+  
+  .dropzone .dz-message {
+    margin: 4em 0 !important;
+}
+  .dropzone .dz-preview.dz-image-preview {
+     width: 60px !important;
+}
+   .dropzone .dz-preview .dz-filename {
+     width: 60px !important;
+} 
+  .dropzone .dz-preview .dz-image {
+    width: 60px !important;
+    height: 60px !important;
+}
+  
+  .dropzone .dz-preview .dz-progress {
+    width: 60px !important;
+    left: 66% !important;
+    top: 105% !important;
+    background: #eee !important;
+}
+  .dropzone .dz-preview .dz-details {
+    font-size: 8px !important;
+    display: contents !important;
+}
+  .dropzone .dz-preview .dz-details .dz-size {
+    margin-bottom: 0em !important;
+    font-size: 11px !important;
+}
+  .dropzone .dz-preview .dz-remove {
+    font-size: 11px !important;
+}
+
+  .dropzone .dz-preview {
+    margin: 0 auto !important;
+}
+  .dropzone.dz-clickable {
+    max-width: 530px !important;
+    margin-left: 10px !important;
+}
+  
+</style>

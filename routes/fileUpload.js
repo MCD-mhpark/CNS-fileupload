@@ -57,9 +57,11 @@ const uploadFiles = (req, res, next) => {
 
 router.post('/ImageGCS', uploadFiles, (req, res) => {
   console.log(req.body);
+  //console.log(req.files);
  
   try {
     let filedata = req.files;
+    let filename;
 
     if (req.files.length !== 0) {
       console.log('file exist, trying to upload...');
@@ -69,13 +71,15 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
 
       Promise.all(
         filedata.map((f) => {
-        var filename = req.body.email[0]+'_'+req.body.campaignId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
-          return new Promise((resolve, reject) => {
+        filename = req.body.contactId+'_'+req.body.campaignId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        console.log(filename);
+
+        return new Promise((resolve, reject) => {
             lgcnsBucket
               .file(`${req.body.campaignId}/${getToday()}/${filename}`) //file folder create and naming
               .createWriteStream()
               .on('finish', () => {
-                console.log("Success");
+                console.log("Success fileUpload");
                 resolve(f.originalname);
               })
               .on('error', (err) => {

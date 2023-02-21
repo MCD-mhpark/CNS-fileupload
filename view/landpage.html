@@ -1,55 +1,9 @@
-<style>
-  .dropzone {
-	display: grid;
-    grid-template-columns: auto auto auto auto auto;
-    gap: 20px;
-}
-  
-  .dropzone .dz-preview.dz-image-preview {
-     width: 60px !important;
-}
-   .dropzone .dz-preview .dz-filename {
-     width: 60px !important;
-} 
-  .dropzone .dz-preview .dz-image {
-    width: 60px !important;
-    height: 60px !important;
-}
-  
-  .dropzone .dz-preview .dz-progress {
-    width: 60px !important;
-    left: 66% !important;
-    top: 105% !important;
-    background: #eee !important;
-}
-  .dropzone .dz-preview .dz-details {
-    font-size: 8px !important;
-    display: contents !important;
-}
-  .dropzone .dz-preview .dz-details .dz-size {
-    margin-bottom: 0em !important;
-    font-size: 11px !important;
-}
-  .dropzone .dz-preview .dz-remove {
-    font-size: 11px !important;
-}
-
-  .dropzone .dz-preview {
-    margin: 0 auto !important;
-}
-  .dropzone.dz-clickable {
-    max-width: 530px !important;
-    margin-left: 10px !important;
-}
-  
-</style>
-
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
 
 <script type="text/javascript">
   
-  //var LV_invalid = $(".LV_invalid").length
+  //var LV_invalid = $(".LV_invalid").length                                               
   
   function disableSubmit(e){
     e.preventDefault();
@@ -99,7 +53,13 @@
   Dropzone.autoDiscover = false;
   
   $(document).ready(function() {
+  
+    $('#file_index_A_p').css('margin', '0px');
+    $('#file_index_B_p').css('margin', '0px');
     
+    //$($('#formElement2').children()[0]).append(`<label class="elq-label" for="fe77777">파일 ${fileCount}개 | 총 용량 ${sumfileSize} MB</label>`)
+    $($('#formElement2').children()[0]).append(`<span class="fileSpan">파일 <p id="file_index_A_p">0</p>개 | 총 용량 <p id="file_index_B_p">0</p> MB</span>`)
+        
     //submit 제출시 페이지 이동 막기
     $(document.querySelector('form')).attr('target','blankifr');
     $(document.querySelector('form')).before('<iframe name="blankifr" style="display:none;"></iframe>')
@@ -109,9 +69,15 @@
 	
 
     $("div.dropzone").dropzone({ 
-
-      //url: "http://localhost:8001/b2bgerp_kr/contacts/ImageGCSTest",
-      url: "http://158.101.141.179:3001/fileUpload/ImageGCSTest",
+      //url: "http://152.70.108.129:3001/fileUpload/ImageGCSTest",
+      //url: "http://158.101.141.179:3001/fileUpload/ImageGCSTest"
+      dictDefaultMessage : "여기에 파일을 Drag & Drop 하거나, 여기를 눌러 파일을 선택해주세요.",
+      dictFallbackMessage : "현재 브라우저는 Drag & Drop 파일 업로드 기능을 지원하지 않습니다.",
+      dictFileTooBig : "파일 용량을 초과 하였습니다.",
+      dictInvalidFileType : "이 형식의 파일은 업로드할 수 없습니다.",
+      dictMaxFilesExceeded : "더 이상 파일을 업로드 할수 없습니다.",
+      
+      url: "https://elqgcsapi.lgcnswithyou.com:447/fileUpload/ImageGCS",
       method: 'POST',
 	  params : {
         'campaignId' : $('input[name=leadsource]').val(),
@@ -123,7 +89,7 @@
       createImageThumbnails: true, //파일 업로드 썸네일 생성
 
       maxFiles: 10, // 업로드 파일수
-      maxFilesize: 200, // 최대업로드용량 : 100MB
+      maxFilesize: 100, // 최대업로드용량 : 100MB
       paramName: function() { return 'image'; }, // 서버에서 사용할 formdata 이름 설정 (default는 file)
       parallelUploads: 10, // 동시파일업로드 수
       uploadMultiple: true, // 다중업로드 기능
@@ -133,47 +99,75 @@
       thumbnailWidth: 60,         // Upload icon size
       addRemoveLinks: true, // 업로드 후 파일 삭제버튼 표시 여부
       dictRemoveFile: '삭제', // 삭제버튼 표시 텍스트
-      acceptedFiles: '.jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF,.BMP,.JFIF,,.docx,.pptx,.pdf,.xlsx,.mp4,.avi,.mpeg', // 이미지 파일 포맷만 허용
+      acceptedFiles: '.jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF,.BMP,.JFIF,,.docx,.pptx,.pdf,.xlsx,.xls,.mp4,.avi,.mpeg,.zip,.mov', // 이미지 파일 포맷만 허용
       
 	  ///
       init: function () {
         console.log('최초 실행');
         let myDropzone = this; // closure 변수 (화살표 함수 쓰지않게 주의)
+        //console.log(myDropzone.files.length);
+ 
+        this.on("addedfile", function(file) {
+          var fileCount = myDropzone.files.length;
+          var sumfileSize = 0;
+          var arrayfileSize = myDropzone.files;
+          arrayfileSize.map((x) => {
+            sumfileSize += parseFloat(x.size);
+          })
+          $("#file_index_A_p").text(fileCount)
+          $(file_index_B_p).text(Math.floor(sumfileSize / 1024 / 1024 * 100) / 100);
+        });
+        this.on("removedfile", function(file) {
+          var fileCount = myDropzone.files.length;
+          var sumfileSize = 0;
+          var arrayfileSize = myDropzone.files;
+          arrayfileSize.map((x) => {
+            sumfileSize += parseFloat(x.size);
+          })
+          $("#file_index_A_p").text(fileCount)
+          $(file_index_B_p).text(Math.floor(sumfileSize / 1024 / 1024 * 100) / 100);
+        });
         
         this.on("sending", function(file, xhr ,formData) {
-          console.log(myDropzone.files);
           let email = $('input[name=EmailAddress]').val();
           formData.append("email", email);
-          console.log('formdate',myDropzone.formData);
+        });
+        
+        this.on("error", function (file, error) {
+        	console.log(error)
         });
         
         this.on("queuecomplete", function (file) {
           console.log('myDropzone.files:',myDropzone.files);
           console.log(myDropzone.files[0].upload.progress);
           if(myDropzone.files[0].upload.progress == 100){
-            //window.location.href='https://s3243454.t.eloqua.com/e/DefaultFormSubmitConfirmation.aspx';
+                        window.location.href='https://s3243454.t.eloqua.com/e/DefaultFormSubmitConfirmation.aspx';	
           }
         });
-
-
         
 		////////////////////////////////////////////////////////
         // 서버에 제출 submit 버튼 이벤트 등록
       document.querySelector('.submit-button-style').addEventListener('click', 				function (e) {
-          console.log('업로드 제출 버튼 클릭');
         //Reject 파일 있을때
         if(myDropzone.getRejectedFiles().length > 0 || $('input[name=lastName]').val() == '' || $('input[name=firstName]').val() == ''){
+          console.log('업로드 제출 버튼 클릭');
           alert('잘못된 파일, 혹은 필수 필드 값을 확인해주세요')
           disableSubmit(e);
         }else{
-          myDropzone.processQueue(); 
-        }
+           //캠페인코드_컨택ID_등록시간(yyMMdd_hhmmssfff포맷)_파일명.파일확장자
+          var arrayResult = [];
+          var arrayfiles = myDropzone.files;
+          arrayfiles.map((x) => {
+            arrayResult.push($('input[name=leadsource]').val()+"_"+ $('input[name=EmailAddress]').val()+"_"
+                             +toStringByFormatting(new Date(),'')+'_'+ x.name)
+          });
+          console.log(arrayResult.join(' , ')); 
+          $('input[name=filename]').val(arrayResult.join(' , '));
+
+          myDropzone.processQueue();  
           
-          //COD 히든필드 매핑 작업
-		 $('input[name=filename]').val(toStringByFormatting(new Date(),'') +"_"+$('input[name=lastName]').val() +"_"+ $('input[name=firstName]').val() + "_" + $('input[name=EmailAddress]').val())
-			console.log('success');
-        	console.log($('input[name=EmailAddress]').val())
-          
+       	 }
+
         });
         ////////////////////////////////////////////////////////     
       }
