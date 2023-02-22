@@ -14,7 +14,7 @@ require('console-stamp')(console, {
     }
 });
 
-const whitelist = ['http://information.lgcns.com'];
+const whitelist = ['http://information.lgcns.com', 'https://connect.lgcns.com'];
 const corsOptons = {
 	origin : function (origin, cb){
 		if(whitelist.indexOf(origin) !== -1){
@@ -64,7 +64,7 @@ app.use(function(err, req, res, next) {
 
 	// render the error page
 	res.status(err.status || 500);
-	res.json({ error: err.message })
+	res.json({ errorMessage: err.message })
 });
 
 module.exports = app;

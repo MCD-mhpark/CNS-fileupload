@@ -90,7 +90,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
         })
       )
         .then((result) => {
-          console.log(result);
+          //console.log(result);
           res.json({
             Result: true,
             LandingPage: result,
@@ -100,7 +100,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
           console.log(err);
           res.json({
             Result: false,
-            LandingPage: err,
+            'errorMessage': err,
           });
         });
         
@@ -116,6 +116,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
     console.log(error.stack);
     res.status(500).json({
       Result: false,
+      'errorMessage': error
     });
   }
 });
