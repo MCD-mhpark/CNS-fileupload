@@ -71,7 +71,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
 
       Promise.all(
         filedata.map((f) => {
-        filename = req.body.contactId+'_'+req.body.campaignId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        filename = req.body.campaignId+'_'+req.body.contactId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
         console.log(filename);
 
         return new Promise((resolve, reject) => {
