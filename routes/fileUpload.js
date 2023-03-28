@@ -19,10 +19,10 @@ function getToday(){
 /////////////////////////////////////////////////////////////////////////
 
 const storage = new Storage({
-  keyFilename: path.join(__dirname, '../lgcns-eloqua.json'),
+  keyFilename: path.join(__dirname, '../lgcns-eloqua-fileupload-616c86993401.json'),
 });
 
-const lgcnsBucket = storage.bucket('lgcns-eloqua-landing-files');
+const lgcnsBucket = storage.bucket('lgcns-eloqua-fileupload');
 
 const uploadFiles = (req, res, next) => {
 
@@ -62,7 +62,8 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
   try {
     let filedata = req.files;
     let filename;
-
+    // let originText = ScalpImgList[key][0]['buffer'];
+    // base64EncodedText = Buffer.from(originText, "utf8").toString('base64');
     if (req.files.length !== 0) {
       console.log('file exist, trying to upload...');
 
@@ -102,7 +103,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
             Result: false,
             'errorMessage': err,
           });
-        });
+        });``
         
     } else {
       //파일이 존재하지 않을때
