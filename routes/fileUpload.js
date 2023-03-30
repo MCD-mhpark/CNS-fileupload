@@ -5,6 +5,11 @@ var { Storage } = require('@google-cloud/storage');
 const Dotenv = require('dotenv');
 const multer = require('multer');
 
+
+/////////////////////////////////////////////////////////////////////////
+// 날짜 변환 함수
+/////////////////////////////////////////////////////////////////////////
+
 function getToday(){
   var date = new Date();
   var year = date.getFullYear();
@@ -13,6 +18,41 @@ function getToday(){
 
   return year + "-" + month + "-" + day;
 }
+
+function getCurrentDate()
+{
+    var date = new Date();
+ 
+    var hour = date.getHours();
+    hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+
+    var minites = date.getMinutes();
+    minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+
+    var seconds = date.getSeconds();
+    seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+
+    var milli = date.getMilliseconds().toString();
+    return hour + minites + seconds + milli;
+}
+
+function leftPad(value) {
+if (value >= 10) {
+  return value;
+}
+
+return `0${value}`;
+}
+
+function toStringByFormatting(source, delimiter = '') {
+const year = source.getFullYear();
+const month = leftPad(source.getMonth() + 1);
+const day = leftPad(source.getDate());
+
+return [year, month, day].join(delimiter);
+}
+
+
 
 /////////////////////////////////////////////////////////////////////////
 //CNS LandingPage -> GCS
@@ -72,7 +112,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
 
       Promise.all(
         filedata.map((f) => {
-        filename = req.body.campaignId+'_'+req.body.contactId+'_'+req.body.createDt+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        filename = req.body.campaignId+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
         console.log(filename);
 
         return new Promise((resolve, reject) => {

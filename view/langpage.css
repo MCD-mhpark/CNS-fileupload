@@ -1,4 +1,4 @@
-<style>
+  
   .fileSpan{
     display: inline-flex !important;
     margin: 8px;
@@ -66,5 +66,12 @@
     max-width: 530px !important;
     margin-left: 10px !important;
 }
+
+  .dropzone .dz-preview .dz-error-message {
+	left: -40px !important;
+}
   
-</style>
+    .dz-preview.dz-image-preview .dz-image {
+  	pointer-events: none !important;
+}
+  
