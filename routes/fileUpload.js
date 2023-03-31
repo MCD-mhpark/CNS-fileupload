@@ -98,8 +98,8 @@ const uploadFiles = (req, res, next) => {
 router.post('/ImageGCS', uploadFiles, (req, res) => {
   console.log(req.body);
   //console.log(req.files);
-  const logreqfiles = req.files.map(x => {x.originalname, x.mimetype, x.size});
-  console.log(logreqfiles);
+  // const logreqfiles = req.files.map(x => {x.originalname, x.mimetype, x.size});
+  // console.log(logreqfiles);
 
   try {
     let filedata = req.files;
@@ -112,7 +112,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
       //Buffer.from(f.originalname, 'latin1').toString('utf8')
       Promise.all(
         filedata.map((f) => {
-        filename = req.body.campaignId.split('_',1)+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+f.originalname
+        filename = req.body.campaignId.split('_',1)+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
         console.log(filename);
 
         return new Promise((resolve, reject) => {
