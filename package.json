@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^6.9.0",
+    "body-parser": "^1.20.2",
     "console-stamp": "^3.0.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
