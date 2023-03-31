@@ -98,21 +98,21 @@ const uploadFiles = (req, res, next) => {
 router.post('/ImageGCS', uploadFiles, (req, res) => {
   console.log(req.body);
   //console.log(req.files);
- 
+  const logreqfiles = req.files.map(x => {x.originalname, x.mimetype, x.size});
+  console.log(logreqfiles);
+
   try {
     let filedata = req.files;
     let filename;
     // let originText = ScalpImgList[key][0]['buffer'];
     // base64EncodedText = Buffer.from(originText, "utf8").toString('base64');
+
     if (req.files.length !== 0) {
       console.log('file exist, trying to upload...');
-
-      // const fileNaming = "";
-      // const blob = lgcnsBucket.file(fileNaming);
-
+      //Buffer.from(f.originalname, 'latin1').toString('utf8')
       Promise.all(
         filedata.map((f) => {
-        filename = req.body.campaignId+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        filename = req.body.campaignId.split('_',1)+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+f.originalname
         console.log(filename);
 
         return new Promise((resolve, reject) => {
@@ -120,10 +120,10 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
               .file(`${req.body.campaignId}/${getToday()}/${filename}`) //file folder create and naming
               .createWriteStream()
               .on('finish', () => {
-                console.log("Success fileUpload");
                 resolve(f.originalname);
               })
               .on('error', (err) => {
+                console.log(`${f.originalname} error fileUpload`);
                 reject(err);
               })
               .end(f.buffer);
@@ -131,7 +131,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
         })
       )
         .then((result) => {
-          //console.log(result);
+          console.log("success fileUpload");
           res.json({
             Result: true,
             LandingPage: result,

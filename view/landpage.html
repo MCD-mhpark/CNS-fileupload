@@ -55,14 +55,14 @@
   $(document).ready(function() {
     
     //$($('#formElement2').children()[0]).append(`<label class="elq-label" for="fe77777">파일 ${fileCount}개 | 총 용량 ${sumfileSize} MB</label>`)
-    $($('#formElement3').children()[0]).append(`<span class="fileSpan">파일 <p id="file_index_A_p">0</p>개 | 총 용량 <p id="file_index_B_p">0</p> MB</span>`)
+    $($('#formElement2').children()[0]).append(`<span class="fileSpan">파일 <p id="file_index_A_p">0</p>개 | 총 용량 <p id="file_index_B_p">0</p> MB</span>`)
         
     //submit 제출시 페이지 이동 막기
     $(document.querySelector('form')).attr('target','blankifr');
     $(document.querySelector('form')).before('<iframe name="blankifr" style="display:none;"></iframe>')
     
-    $($('.row')[11]).remove()
-    $($('.row')[10]).after('<div class="dropzone"></div>');
+    $($('.row')[8]).remove()
+    $($('.row')[7]).after('<div class="dropzone"></div>');
 	
 
     $("div.dropzone").dropzone({ 
@@ -76,8 +76,7 @@
       method: 'POST',
 	  params : {
         'campaignId' : $('input[name=leadsource]').val(),
-        'contactId': $('input[name=EloquaContactID]').val() !== '' ? $('input[name=EloquaContactID]').val() : 'Undefined',
-       	'createDt' : toStringByFormatting(new Date(),'')+'_'+getCurrentDate() 
+        'contactId': $('input[name=EloquaContactID]').val() != '' ? $('input[name=EloquaContactID]').val() : 'Undefined'
       },
       autoProcessQueue: false, // this.processQueue() 호출시 전송
       clickable: true, // 클릭 가능 여부
@@ -114,11 +113,12 @@
           
              
         });
+        
         this.on("removedfile", function(file) {
           var fileCount = myDropzone.files.length;
           var sumfileSize = 0;
           var arrayfileSize = myDropzone.files;
-          arrayfileSize.map((x) => {
+          	arrayfileSize.map((x) => {
             sumfileSize += parseFloat(x.size);
           })
           $("#file_index_A_p").text(fileCount)
@@ -126,29 +126,48 @@
         });
         
         this.on("sending", function(file, xhr ,formData) {
-          let email = $('input[name=EmailAddress]').val();
-          formData.append("email", email);
+          //let email = $('input[name=EmailAddress]').val();
+          //formData.append("email", email);
+          //myDropzone.options.params = {'contactId': $('input[name=EloquaContactID]').val() != '' ? $('input[name=EloquaContactID]').val() : 'Undefined'};
         });
         
         this.on("error", function (file, error) {
-           //myDropzone.defaultOptions.error(file, error.message);
-          	//console.log('test', file.previewElement.querySelectorAll('.dz-error-message span')[0].textContent = error.errorMessage)
-          //file.previewElement.querySelectorAll('.dz-error-message span')[0].textContent = error.errorMessage
           console.log('error', error);
         });
         
         this.on("queuecomplete", function (file) {
           console.log('myDropzone.files:',myDropzone.files);
           console.log('myDropzone.files.length:',myDropzone.files.length)
-          console.log(myDropzone.files[0].upload.progress);
-          if(myDropzone.files[0].upload.progress == 100 && myDropzone.files[0].status != 'error'){
-            window.location.href='https://s3243454.t.eloqua.com/e/DefaultFormSubmitConfirmation.aspx';	
-          }else if(myDropzone.files[0].upload.progress != 0){
-           alert('서버 에러가 발생하였습니다. 관리자에게 문의 바랍니다.');
             
-          }
+          var sendfilesResult = [];
+          var sendfiles = myDropzone.files;
+          console.log('//오류 확인 시작//')
+          sendfiles.map((x) => {	
+            if(x.upload.progress == 100 && x.status != 'error'){    
+              sendfilesResult.push('true')       
+            }else if(x.upload.progress != 0 && x.status == 'error'){
+              sendfilesResult.push('false')    
+            }else{
+              sendfilesResult.push('-1')
+              console.log("예외 상황 오류") 
+              console.log(x.upload) 
+            }
+          })
+
+          console.log(sendfilesResult.length)
+          console.log('//오류 확인 끝//')
+          
+          var errorResult = sendfilesResult.filter((count) => {return count == "false"});
+          var error1Result = sendfilesResult.filter((count) => {return count == "-1"});
+          
+          if(errorResult.length > 0){
+            alert('서버 에러가 발생하였습니다. 관리자에게 문의 바랍니다.');
+          }else if (error1Result.length > 0){  
+            console.log('첨부파일을 다시 확인해주세요.');
+          }else{
+                window.location.href='https://s3243454.t.eloqua.com/e/DefaultFormSubmitConfirmation.aspx';}
         });
-        
+
 		////////////////////////////////////////////////////////
         // 서버에 제출 submit 버튼 이벤트 등록
       document.querySelector('.submit-button-style').addEventListener('click', 				function (e) {
@@ -157,6 +176,9 @@
         if(myDropzone.getRejectedFiles().length > 0 || $('input[name=lastName]').val() == '' || $('input[name=firstName]').val() == ''){
           console.log('업로드 제출 버튼 클릭');
           alert('잘못된 파일, 혹은 필수 필드 값을 확인해주세요')
+          disableSubmit(e);
+        }else if ($('input[name=EloquaContactID]').val() == ''){
+          alert('EloquaContactID 값이 설정 되지 않았습니다. 관리자에게 문의 바랍니다.')
           disableSubmit(e);
         }else{
           

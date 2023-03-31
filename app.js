@@ -38,12 +38,12 @@ app.use(methodOverride('_method'));
 //app.use('/modules', express.static(module_files));
 
 app.use(cors(corsOptons));
-app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({limit: '50mb'})); //body 의 크기 설정
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true})); //url의 크기 설정
  
 app.use(logger('dev'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 
