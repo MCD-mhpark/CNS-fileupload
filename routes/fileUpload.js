@@ -69,7 +69,7 @@ const uploadFiles = (req, res, next) => {
     const uploadImage = multer({
         storage: multer.memoryStorage(),
         limits: {
-            fileSize: 100 * 1024 * 1024, //MB
+            fileSize: 10 * 1024 * 1024, //MB
             files: 10,
         }
     }).array('image', 10)
@@ -112,7 +112,8 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
       //Buffer.from(f.originalname, 'latin1').toString('utf8')
       Promise.all(
         filedata.map((f) => {
-        filename = req.body.campaignId.split('_',1)+'_'+req.body.contactId+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        let email = req.body.emailAddress.slice(0,4) + req.body.emailAddress.slice(-5)
+        filename = req.body.campaignId.split('_',1)+'_'+email+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
         console.log(filename);
 
         return new Promise((resolve, reject) => {
