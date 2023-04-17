@@ -113,7 +113,7 @@ router.post('/ImageGCS', uploadFiles, (req, res) => {
       Promise.all(
         filedata.map((f) => {
         let email = req.body.emailAddress.slice(0,5) + req.body.emailAddress.slice(-5)
-        filename = req.body.campaignId.split('_',1)+'_'+email+'_'+toStringByFormatting(new Date(),'')+'_'+getCurrentDate()+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
+        filename = req.body.campaignId.split('_',1)+'_'+email+'_'+req.body.uploadTime+'_'+Buffer.from(f.originalname, 'latin1').toString('utf8')
         console.log(filename);
 
         return new Promise((resolve, reject) => {

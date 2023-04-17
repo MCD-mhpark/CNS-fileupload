@@ -1,4 +1,9 @@
-
+<style>
+  
+  .check-area .form-element-instruction:nth-child(1) {
+    border-bottom: none !important;
+}
+  
   .fileSpan{
     display: inline-flex !important;
     margin: 8px;
@@ -41,12 +46,17 @@
     height: 60px !important;
 }
   
+  .dz-preview.dz-file-preview.dz-processing {
+    width: 60px !important;
+}
+  
   .dropzone .dz-preview .dz-progress {
     width: 60px !important;
     left: 66% !important;
     top: 105% !important;
     background: #eee !important;
 }
+  
   .dropzone .dz-preview .dz-details {
     font-size: 8px !important;
     display: contents !important;
@@ -63,7 +73,7 @@
     margin: 0 auto !important;
 }
   .dropzone.dz-clickable {
-    max-width: 530px !important;
+    max-width: 1030px !important;
     margin-left: 10px !important;
 }
 
@@ -74,4 +84,6 @@
     .dz-preview.dz-image-preview .dz-image {
   	pointer-events: none !important;
 }
+
   
+</style>
